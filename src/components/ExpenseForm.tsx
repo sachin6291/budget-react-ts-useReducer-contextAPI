@@ -6,6 +6,7 @@ import 'react-date-picker/dist/DatePicker.css'
 import { DraftExpense, Value } from "../types";
 import { ChangeEvent } from "react";
 import ErrorMessage from "./ErrorMessage";
+import { useBudget } from "../hook/useBudget";
 
 
 
@@ -18,6 +19,9 @@ export default function ExpenseForm() {
     })
 
     const[error, setError]=useState('')
+
+    const{dispatch}=useBudget()
+
     const handleChange=(e:ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>)=>{
         const {name, value} = e.target
         const isAmountFeild = ['expenseAmount'].includes(name)
@@ -44,9 +48,21 @@ export default function ExpenseForm() {
             setError('All Feilds are Required')
             return
         }
-        console.log(('you got lucky'));
-        
+
+        //add new expense
+        dispatch({type: 'addExpense', payload:{expense}})
+
+        //reset state
+        setExpense({
+            expenseAmount:0,
+            expenseName:'',
+            expenseCategory:'',
+            date:new Date()
+        })
     }
+
+
+
   return (
     <form className=" space-y-5" onSubmit={handleSubmit}>
         <legend className="uppercase text-center text-2xl font-bold border-b-4 border-sky-500 py-2">New Expense</legend>
