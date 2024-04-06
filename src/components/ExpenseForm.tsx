@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { categories } from "../data/categories";
 import DatePicker from 'react-date-picker';
 import'react-calendar/dist/Calendar.css'
@@ -20,7 +20,17 @@ export default function ExpenseForm() {
 
     const[error, setError]=useState('')
 
-    const{dispatch}=useBudget()
+    const{dispatch, state}=useBudget()
+
+    useEffect(()=>{
+        if(state.editing){
+            const fillFormEdit =state.expenses.filter(expn=>expn.id===state.editing)[0]
+            console.log(fillFormEdit); 
+            setExpense(fillFormEdit)
+        }
+    },[state.editing])
+
+
 
     const handleChange=(e:ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>)=>{
         const {name, value} = e.target
@@ -50,7 +60,11 @@ export default function ExpenseForm() {
         }
 
         //add new expense
+        if(state.editing){
+            dispatch({type:'updateExpense',payload:{expense:{id:state.editing, ...expense}}})
+        }else{
         dispatch({type: 'addExpense', payload:{expense}})
+        }
 
         //reset state
         setExpense({
@@ -65,7 +79,8 @@ export default function ExpenseForm() {
 
   return (
     <form className=" space-y-5" onSubmit={handleSubmit}>
-        <legend className="uppercase text-center text-2xl font-bold border-b-4 border-sky-500 py-2">New Expense</legend>
+        
+        <legend className="uppercase text-center text-2xl font-bold border-b-4 border-sky-500 py-2">{state.editing?'Edit Expense':'New Expense'}</legend>
         {error && <ErrorMessage>{error}</ErrorMessage>}
         <div className="flex flex-col gap-2">
             <label htmlFor="expenseName" className=" text-xl">Expense:</label>
@@ -119,7 +134,7 @@ export default function ExpenseForm() {
         <input
             type='submit'
             className=" bg-sky-700 cursor-pointer w-full p-2 text-white uppercase font-semibold text-lg rounded-md"
-            value='Done'
+            value={state.editing?'Edit':'Done'}
         />
     </form>
   )

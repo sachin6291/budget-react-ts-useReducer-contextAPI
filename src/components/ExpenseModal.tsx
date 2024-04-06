@@ -6,6 +6,8 @@ import ExpenseForm from "./ExpenseForm";
 
 export default function ExpenseModal() {
 
+//using headless ui react's transition and dialog for modal of ExpenseForm
+
     const {state, dispatch}= useBudget()
   return (
     <>

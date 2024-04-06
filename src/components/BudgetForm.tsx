@@ -2,7 +2,13 @@ import { ChangeEvent, useMemo, useState, FormEvent } from "react"
 import { useBudget } from "../hook/useBudget"
 
 export default function BudgetForm() {
+
+    
+//useState to make it easy to do validation and then pass on
+//as payload to reducer through custom Hook and ContextAPI
+
     const [budget, setBudget]= useState(0)
+    
     const{dispatch}= useBudget()
 
     const handleChange= (e: ChangeEvent<HTMLInputElement>)=>{
@@ -10,8 +16,7 @@ export default function BudgetForm() {
     }
 
     const isValid= useMemo(()=>{
-        return isNaN(budget) || budget<=0
-        
+        return isNaN(budget) || budget<=0   
     },[budget])
 
     const handleSubmit=(e : FormEvent<HTMLFormElement>)=>{
