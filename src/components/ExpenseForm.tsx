@@ -20,13 +20,15 @@ export default function ExpenseForm() {
 
     const[error, setError]=useState('')
 
-    const{dispatch, state}=useBudget()
+    const[previousAmount, setPreviousAmount ]= useState(0)
+
+    const{dispatch, state, available}=useBudget()
 
     useEffect(()=>{
         if(state.editing){
             const fillFormEdit =state.expenses.filter(expn=>expn.id===state.editing)[0]
-            console.log(fillFormEdit); 
             setExpense(fillFormEdit)
+            setPreviousAmount(fillFormEdit.expenseAmount)
         }
     },[state.editing])
 
@@ -58,6 +60,10 @@ export default function ExpenseForm() {
             setError('All Feilds are Required')
             return
         }
+        if(available < (expense.expenseAmount - previousAmount)){
+            setError(`You are exceeding the budget, remaining(${available}€)`)
+            return
+        }
 
         //add new expense
         if(state.editing){
@@ -73,6 +79,7 @@ export default function ExpenseForm() {
             expenseCategory:'',
             date:new Date()
         })
+        setPreviousAmount(0)
     }
 
 
